@@ -1,0 +1,27 @@
+{
+  "authors": [
+    {
+      "name": "Alex Pereverzev",
+      "email": "leit040@gmail.com",
+      "homepage": "http://www.linkedin.com/in/leit-2040",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Leit040\\AspasiaBot\\": "src/"
+      }
+  },
+  "name": "leit040/aspasiabot",
+  "description": "Aspasia TG Bot",
+  "type": "project",
+
+  "require": {
+    "php": "^7.4|^8.0",
+    "vlucas/phpdotenv": "^5.3",
+    "guzzlehttp/guzzle":"^7.0",
+    "illuminate/routing": "^7.24",
+    "illuminate/view": "^7.0",
+    "ext-json": "*"
+  }
+}
