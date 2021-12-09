@@ -11,7 +11,11 @@ class BotController
 
 
     public function callback(Request $request){
-       $json = json_decode(file_get_contents('php://input'), true);
+
+
+        $json = json_decode(file_get_contents('php://input'), true);
+
+        file_put_contents('tmp/test.txt','$json: '.print_r($json,1)."\n");
 
 
         $data = [
