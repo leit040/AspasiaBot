@@ -4,16 +4,15 @@ namespace Leit040\AspasiaBot\Controllers;
 
 use http\Client;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+
 
 class BotController
 {
 
-
-
-    public function callback(Request $request){
-
-        $json = json_decode(file_get_contents('php://input'), true);
-
+    public function callback(){
+        // $json = json_decode(file_get_contents('php://input'), true);
+        $json = \request()->json();
         file_put_contents('tmp/test.txt','$json: '.print_r($json,1)."\n",FILE_APPEND);
 
 
