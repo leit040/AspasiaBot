@@ -1,1 +1,40 @@
-_!!!!!!!__!!!!!!!_
+_!!!!!!!__!!!!!!!_$json: 
+$json: Array
+(
+    [update_id] => 823417235
+    [message] => Array
+        (
+            [message_id] => 94
+            [from] => Array
+                (
+                    [id] => 365124248
+                    [is_bot] => 
+                    [first_name] => Allen
+                    [last_name] => Dalles
+                    [username] => leit_2040
+                    [language_code] => en
+                )
+
+            [chat] => Array
+                (
+                    [id] => 365124248
+                    [first_name] => Allen
+                    [last_name] => Dalles
+                    [username] => leit_2040
+                    [type] => private
+                )
+
+            [date] => 1638991488
+            [text] => xx
+        )
+
+)
+
+$json: Array
+(
+)
+
+$json: Array
+(
+)
+
