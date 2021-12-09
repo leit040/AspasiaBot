@@ -12,10 +12,9 @@ class BotController
 
     public function callback(){
         // $json = json_decode(file_get_contents('php://input'), true);
-        $json = \request()->json();
-        file_put_contents('tmp/test.txt','$json: '.print_r($json,1)."\n",FILE_APPEND);
+        $json = \request()->json()->all();
 
-
+       // file_put_contents('tmp/test.txt','$json: '.print_r($json,1)."\n",FILE_APPEND);
         $data = [
             'chat_id'=> $json['message']['chat']['id'],
             'text' =>  "Привет. Это чат-бот для поддержки клиентов. Нажмите \"Start\", выберите мастера и напишите свой вопрос",
