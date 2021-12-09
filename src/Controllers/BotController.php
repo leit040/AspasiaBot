@@ -8,25 +8,48 @@ use Illuminate\Http\Request;
 class BotController
 {
 
+
+
     public function callback(Request $request){
-
-
-//        $client = new \GuzzleHttp\Client();
-//        $response =  $client->get('https://api.telegram.org/bot5004217511:AAHDI32ciQvcHVk9EII4lsBNTU1JBPgHU8w/getUpdates');
-//       $json1 = $response->getBody()->getContents();
-     //  $json = $request->json();
-
-      //  $json = json_decode($json,true);
        $json = json_decode(file_get_contents('php://input'), true);
-//       file_put_contents('./tmp/test.txt',$json['message']['text'], FILE_APPEND );
-//       file_put_contents('./tmp/test.txt','_!!!!!!!_',FILE_APPEND);
-        $data['chat_id'] = $json['message']['chat']['id'];
-        $data['text'] = "Your order (#" . $json['message']['text'] . ") now have  status  '" . '!!!!!!' . "'";
 
-        file_get_contents('https://api.telegram.org/bot' . getenv("API_TOKEN") . '/sendMessage?' . http_build_query($data));
+
+        $data = [
+            'chat_id'=> $json['message']['chat']['id'],
+            'text' =>  "Привет. Это чат-бот для поддержки клиентов. Нажмите \"Start\", выберите мастера и напишите свой вопрос",
+            'reply_markup'=> json_encode([
+                'resize_keyboard'=>true,
+                'keyboard' => [
+
+                        [
+                            ['text'=>'text1','callback_data' => '/yes'],
+                            ['text'=>'text2']
+                        ],
+                        [
+                            ['text'=>'text3'],
+                            ['text'=>'text4']
+                        ]
+                ]
+            ])
+        ];
+
+
+
+         $this->sendMessage($data);
+        //file_get_contents('https://api.telegram.org/bot' . getenv("TOKEN") . '/sendMessage?' . http_build_query($data));
 
     }
 
+public function sendMessage(array $data){
+
+    file_get_contents(getenv('URL').getenv('TOKEN')."/sendMessage?".http_build_query($data));
 
 }
-//Lsn07fyM3rl91V5JYA
+public function sendMasterList($chat_id){
+      $dbr = new DbRepository();
+      $row = $dbr->getMastersList();
+
+    }
+
+}
+
