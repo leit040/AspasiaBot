@@ -25,3 +25,4 @@ function router()
 
 $router->get('/callback','Leit040\AspasiaBot\Controllers\BotController@callback');
 
+$router->get('/get','Leit040\AspasiaBot\Controllers\BotController@getUpdates');
