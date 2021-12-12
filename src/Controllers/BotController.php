@@ -54,9 +54,7 @@ class BotController
                 case '/next':
                     $this->sendMasterList($message['callback_query']['from']['id']);
                     return;
-                case '/finish':
 
-                    return;
                 default:
                  if ($masterId = $this->dbr->isMasterId($message['callback_query']['message']['data']))
                  {
@@ -75,6 +73,9 @@ class BotController
                 $this->dbr->saveUser($message);
                 $this->sendHello($message['from']['id']);
                 return;
+            case '/finish':
+                $this->finishDialog($message['from']['id']);
+                    return;
             default:
                 if ($chat_id = $this->dbr->ifMasterInDialog($message['from']['id'])) {
                     $this->forwardMessage($chat_id, $message, 'masterToUser');
@@ -114,7 +115,7 @@ public function startDialog($chat_id, $master_id){
             'reply_markup' => json_encode([
                 'resize_keyboard' => true,
                 'inline_keyboard' => [
-                    $buttons
+                    [$buttons],
                 ]
             ])
         ];
@@ -140,6 +141,23 @@ public function startDialog($chat_id, $master_id){
         ];
 
         $this->sendMessage($data);
+    }
+
+    public function finishDialog($masterId){
+        $clientId = $this->dbr->ifClientInDialog($masterId);
+        $this->dbr->finishDialog($masterId);
+        $data = [
+            'chat_id' => $clientId,
+            'text' => "Мастер закончил этот разговор. Спасибо за Ваше обращение.",
+            'inline_keyboard' => [
+                [
+                    ['text' => 'Продолжить', 'callback_data' => '/start'],
+
+                ],
+            ]
+        ];
+        $this->sendMessage($data);
+
     }
 
     public function forwardMessage($message, $userId, $mark)

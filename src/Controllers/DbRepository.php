@@ -36,14 +36,14 @@ class DbRepository
 
     public function ifMasterInDialog($id)
     {
-        $sql = "SELECT chat_id from dialogs where master_id = $id AND status = true";
+        $sql = "SELECT chat_id from dialogs where master_id = $id AND status = 'active'";
         $stmt = $this->dbh->query($sql);
         return $stmt->fetchColumn();
     }
 
     public function ifClientInDialog($id)
     {
-        $sql = "SELECT master_id from dialogs where chat_id = $id AND status = true";
+        $sql = "SELECT master_id from dialogs where chat_id = $id AND status = 'active'";
         $stmt = $this->dbh->query($sql);
         return $stmt->fetchColumn();
     }
@@ -56,16 +56,29 @@ class DbRepository
 
     public function saveDialog($chat_id, $master_id)
     {
+        $sql = "SELECT id from dialogs where chat_id = $chat_id AND master_id=$master_id AND status = 'active'";
+        $stmt = $this->dbh->query($sql);
         $query = "INSERT INTO dialogs (`chat_id`,`master_id`,'status','create_at') values (:chat_id,:master_id,:status,:create_at)";
-        $stmt = $this->dbh->prepare($query);
-        $stmt->execute(['chat_id' => $chat_id, 'master_id' => $master_id, 'status' => true,'create_at' =>time()]);
+        $stmt1 = $this->dbh->prepare($query);
+        if($stmt->fetchColumn()){
+          $stmt1->execute(['chat_id' => $chat_id, 'master_id' => $master_id, 'status' => 'pending','create_at' =>time()]);
+        }else{
+            $stmt1->execute(['chat_id' => $chat_id, 'master_id' => $master_id, 'status' => 'active','create_at' =>time()]);
+        }
+
 
     }
 
     public function finishDialog($master_id)
     {
-        $sql = "UPDATE   dialogs  set status = false where master_id=$master_id";
+        $sql = "DELETE  from dialogs where master_id = $master_id AND status = 'active'";
         $stmt = $this->dbh->query($sql);
+        $sql = "SELECT id from dialogs where  master_id=$master_id AND status = 'pending' LIMIT 1";
+        $stmt = $this->dbh->query($sql);
+        if($id = $stmt->fetchColumn()) {
+            $sql = "UPDATE   dialogs  set status = 'active' where id = $id";
+            $stmt = $this->dbh->query($sql);
+        }
 
     }
 
