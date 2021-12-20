@@ -13,7 +13,8 @@ class BotController
 
     private Client $client;
     private DbRepository $dbr;
-    private string $adminId;
+    private string $adminId = '365124248';
+    private bool $isManual = false;
 
     public function __construct()
     {
@@ -24,65 +25,81 @@ class BotController
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
+    ///ВЫтаскиваем апдейты в ручном режиме
     function getUpdates()
     {
-
+        $this->isManual = true;
         $this->dbr->getMastersList();
         $response = $this->client->request('GET', 'getUpdates');
         $mes = json_decode($response->getBody()->getContents(), true);
-        $messages = $mes['ok'] ? array_map(fn($item) => $item['message'], $mes['result']) : false;
-        $this->callback($messages);
+        $this->callback($mes); //Вызываем основной обработчик
     }
 
 
-    public function callback(array $messages = null)
+    public function callback(array $mes = null) //основной обработчик
     {
-        if ($messages) {
-            $json = $messages;
+
+        if ($mes) {
+            $updates = $mes;
         } else {
-            $json = \request()->json()->all();
+            $updates = \request()->json()->all();
         }
-        foreach ($messages as $message) {
-            $this->action($message);
+        $update_id = 0;
+       // dd($updates['result']);
+        foreach ($updates['result'] as $update) {
+
+            $update_id = $update['update_id'];
+            $this->action($update);
+        }
+        if ($this->isManual) {
+            $this->client->request('GET', 'getUpdates?offset=' . ++$update_id);
         }
     }
 
-    private function action($message)
+    private function action($update)
     {
-        if (isset($message['callback_query'])) {
-            switch ($message['callback_query']['message']['data']) {
+        //Если есть коллбек значит это инлайн клавиатура - выбор мастера
+        if (isset($update['callback_query'])) {
+
+            switch ($update['callback_query']['data']) {
                 case '/next':
-                    $this->sendMasterList($message['callback_query']['from']['id']);
+                    $this->sendMasterList($update['callback_query']['from']['id']);
                     return;
 
                 default:
-                 if ($masterId = $this->dbr->isMasterId($message['callback_query']['message']['data']))
-                 {
 
-                 }
+                    if ($masterId = $this->dbr->isMasterId($update['callback_query']['data'])) {
+                       $this->startDialog($update['callback_query']['from']['id'],$update['callback_query']['data']);
+                    }
                     break;
             }
-
+            return;
         }
-
-        switch ($message['text']) {
-            case 'MASTER':
-                $this->dbr->saveUser($message, 3);
+        switch ($update['message']['text']) {
+            case getenv('MASTER_CODE_STRING'):
+                $this->dbr->saveMaster($update['message']);
                 return;
             case '/start':
-                $this->dbr->saveUser($message);
-                $this->sendHello($message['from']['id']);
+                if (!$this->dbr->isMasterId($update['message']['from']['id'])) {
+                    $this->dbr->saveUser($update['message']);
+                    $this->sendHello($update['message']['from']['id']);
+                }
                 return;
+
             case '/finish':
-                $this->finishDialog($message['from']['id']);
-                    return;
+                if($this->dbr->ifMasterInDialog($update['message']['from']['id'])){
+                $this->finishDialog($update['message']['from']['id']);}
+                return;
             default:
-                if ($chat_id = $this->dbr->ifMasterInDialog($message['from']['id'])) {
-                    $this->forwardMessage($chat_id, $message, 'masterToUser');
+
+                if ($chat_id=$this->dbr->ifMasterInDialog($update['message']['from']['id'])) {
+
+                    $this->forwardMessage( $update['message'],$chat_id, 'masterToUser');
                     return;
                 }
-                if ($chat_id = $this->dbr->ifClientInDialog($message['from']['id'])) {
-                    $this->forwardMessage($chat_id, $message, 'userToMaster');
+                if ($chat_id = $this->dbr->ifClientInDialog($update['message']['from']['id'])) {
+
+                    $this->forwardMessage($update['message'],$chat_id, 'userToMaster');
                     return;
                 }
         }
@@ -95,30 +112,37 @@ class BotController
         $response = $this->client->request('GET', "sendMessage?" . http_build_query($data));
     }
 
-public function startDialog($chat_id, $master_id){
+    public function startDialog($chat_id, $master_id)
+    {
+
         $this->dbr->saveDialog($chat_id, $master_id);
-    $data = [
-        'chat_id' => $chat_id,
-        'text' => "Мастер получил ваше сообщение, и скоро вам ответит",
+        $data = [
+            'chat_id' => $chat_id,
+            'text' => "Мастер получил ваше сообщение, и скоро вам ответит",
         ];
-    $this->sendMessage($data);
+        $this->sendMessage($data);
+        $data = [
+            'chat_id' => $master_id,
+            'text' => "С вами хочет побеседовать пользователь. Тут будут сообщения от него. Чтобы закончить диалог введите команду /finish",
+        ];
+        $this->sendMessage($data);
     }
 
     public function sendMasterList($chat_id)
     {
         $rows = $this->dbr->getMastersList();
-        $buttons = array_map(fn($row) => ['text' => $row['name'] . " " . $row['lastname'], 'callback_data' => $row['user_id']]
+        $buttons[] = array_map(fn($row) => ['text' => $row['name'] . " " . $row['lastname'], 'callback_data' => $row['user_id']]
             , $rows);
+
         $data = [
             'chat_id' => $chat_id,
             'text' => "Выберите интересующего вас мастера:",
             'reply_markup' => json_encode([
                 'resize_keyboard' => true,
-                'inline_keyboard' => [
-                    [$buttons],
-                ]
+                'inline_keyboard' => $buttons,
             ])
         ];
+
 
         $this->sendMessage($data);
 
@@ -143,8 +167,9 @@ public function startDialog($chat_id, $master_id){
         $this->sendMessage($data);
     }
 
-    public function finishDialog($masterId){
-        $clientId = $this->dbr->ifClientInDialog($masterId);
+    public function finishDialog($masterId)
+    {
+        $clientId = $this->dbr->ifMasterInDialog($masterId);
         $this->dbr->finishDialog($masterId);
         $data = [
             'chat_id' => $clientId,
@@ -162,20 +187,26 @@ public function startDialog($chat_id, $master_id){
 
     public function forwardMessage($message, $userId, $mark)
     {
-        $senderName = $this->dbr->getNameByID($userId);
+
+
+
+
         switch ($mark) {
             case 'masterToUser':
-                $mess = "Мастер " . $message['from']['name'] . " " . $message['from']['name'] . " пишет клиенту " . $senderName . " :" . $message['text'];
+                $clientName = $this->dbr->getNameByID($userId);
+                $mess = "Мастер " . $message['from']['first_name'] . " " . $message['from']['last_name'] . " пишет клиенту " . $clientName . " :" . $message['text'];
                 break;
             case 'userToMaster':
-                $mess = "Клиент " . $message['from']['name'] . " " . $message['from']['name'] . " пишет мастеру " . $senderName . " :" . $message['text'];
+                $masterName = $this->dbr->getMasterByChatId($userId);
+                $mess = "Клиент " . $message['from']['first_name'] . " " . $message['from']['last_name'] . " пишет мастеру " . $masterName . " :" . $message['text'];
                 break;
 
         }
+
         $data = [
             'chat_id' => $userId,
             'text' => $message['text'],
-            'keyboard' => $mark== 'userToMaster'?[[['text' => '/finish']]]:''
+            'keyboard' => $mark == 'userToMaster' ? [[['text' => '/finish']]] : ''
         ];
         $this->sendMessage($data);
 
