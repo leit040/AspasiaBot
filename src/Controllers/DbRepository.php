@@ -28,7 +28,7 @@ class DbRepository
     }
 
     public function getMasterByChatId($chat_id){
-        $sql = "SELECT * from dialogs  LEFT JOIN users ON dialogs.master_id = users.user_id where dialogs.chat_id = $chat_id AND status = 'active'";
+        $sql = "SELECT users.name, users.lastname, users.user_id from dialogs   JOIN users ON dialogs.master_id = users.user_id where dialogs.master_id = $chat_id AND status = 'active'";
         $stmt = $this->dbh->query($sql);
         $result = $stmt->fetch(PDO::FETCH_LAZY);
         return $result->name . " " . $result->lastname;

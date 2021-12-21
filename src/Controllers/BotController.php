@@ -25,7 +25,7 @@ class BotController
     /**
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    ///ВЫтаскиваем апдейты в ручном режиме
+
     function getUpdates()
     {
         $this->isManual = true;
@@ -36,7 +36,7 @@ class BotController
     }
 
 
-    public function callback(array $mes = null) //основной обработчик
+    public function callback(array $mes = null)
     {
 
         if ($mes) {
@@ -45,7 +45,7 @@ class BotController
             $updates = \request()->json()->all();
         }
         $update_id = 0;
-       // dd($updates['result']);
+        // dd($updates['result']);
         foreach ($updates['result'] as $update) {
 
             $update_id = $update['update_id'];
@@ -58,7 +58,7 @@ class BotController
 
     private function action($update)
     {
-        //Если есть коллбек значит это инлайн клавиатура - выбор мастера
+
         if (isset($update['callback_query'])) {
 
             switch ($update['callback_query']['data']) {
@@ -69,7 +69,7 @@ class BotController
                 default:
 
                     if ($masterId = $this->dbr->isMasterId($update['callback_query']['data'])) {
-                       $this->startDialog($update['callback_query']['from']['id'],$update['callback_query']['data']);
+                        $this->startDialog($update['callback_query']['from']['id'], $update['callback_query']['data']);
                     }
                     break;
             }
@@ -87,19 +87,20 @@ class BotController
                 return;
 
             case '/finish':
-                if($this->dbr->ifMasterInDialog($update['message']['from']['id'])){
-                $this->finishDialog($update['message']['from']['id']);}
+                if ($this->dbr->ifMasterInDialog($update['message']['from']['id'])) {
+                    $this->finishDialog($update['message']['from']['id']);
+                }
                 return;
             default:
 
-                if ($chat_id=$this->dbr->ifMasterInDialog($update['message']['from']['id'])) {
+                if ($chat_id = $this->dbr->ifMasterInDialog($update['message']['from']['id'])) {
 
-                    $this->forwardMessage( $update['message'],$chat_id, 'masterToUser');
+                    $this->forwardMessage($update['message'], $chat_id, 'masterToUser');
                     return;
                 }
                 if ($chat_id = $this->dbr->ifClientInDialog($update['message']['from']['id'])) {
 
-                    $this->forwardMessage($update['message'],$chat_id, 'userToMaster');
+                    $this->forwardMessage($update['message'], $chat_id, 'userToMaster');
                     return;
                 }
         }
@@ -131,7 +132,7 @@ class BotController
     public function sendMasterList($chat_id)
     {
         $rows = $this->dbr->getMastersList();
-        $buttons[] = array_map(fn($row) => ['text' => $row['name'] . " " . $row['lastname'], 'callback_data' => $row['user_id']]
+        $buttons = array_map(fn($row) => [['text' => $row['name'] . " " . $row['lastname'], 'callback_data' => $row['user_id']]]
             , $rows);
 
         $data = [
@@ -187,10 +188,6 @@ class BotController
 
     public function forwardMessage($message, $userId, $mark)
     {
-
-
-
-
         switch ($mark) {
             case 'masterToUser':
                 $clientName = $this->dbr->getNameByID($userId);
