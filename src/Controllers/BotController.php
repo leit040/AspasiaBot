@@ -65,8 +65,8 @@ class BotController
                 default:
 
                     if ($masterId = $this->dbr->isMasterId($update['callback_query']['data'])) {
-                        if(!$this->dbr->ifClientInDialog($update['callback_query']['from']['id']))
-                        {$this->startDialog($update['callback_query']['from']['id'], $update['callback_query']['data']);}
+                        if(!$this->dbr->ifClientInActiveDialog($update['callback_query']['from']['id']))
+                        {$this->startDialog($update['callback_query']['from']['id'], $update['callback_query']['data'],'');}
                     }
                     break;
             }
@@ -113,9 +113,9 @@ class BotController
         $response = $this->client->request('GET', "sendMessage?" . http_build_query($data));
     }
 
-    public function startDialog($chat_id, $master_id)
+    public function startDialog($chat_id, $master_id,$message)
     {
-        $this->dbr->saveDialog($chat_id, $master_id);
+        $this->dbr->saveDialog($chat_id, $master_id,$message);
         $data = [
             'chat_id' => $chat_id,
             'text' => "Мастер получил ваше сообщение, и скоро вам ответит",

@@ -30,18 +30,34 @@ CREATE TABLE `dialogs` (
   `create_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `dialogs_id_uindex` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB AUTO_INCREMENT=1;
 
 --
 -- Dumping data for table `dialogs`
 --
 
-LOCK TABLES `dialogs` WRITE;
-/*!40000 ALTER TABLE `dialogs` DISABLE KEYS */;
-INSERT INTO `dialogs` VALUES (8,'5023984473','5049241161','active',NULL);
-/*!40000 ALTER TABLE `dialogs` ENABLE KEYS */;
-UNLOCK TABLES;
+
+
+--
+-- Table structure for table `pending`
+--
+
+DROP TABLE IF EXISTS `pending`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pending` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `message` text NOT NULL,
+  `dialogId` bigint NOT NULL,
+  `masterId` varchar(36) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+--
+-- Dumping data for table `pending`
+--
+
 
 --
 -- Table structure for table `roles`
@@ -54,18 +70,16 @@ CREATE TABLE `roles` (
   `id` int NOT NULL AUTO_INCREMENT,
   `role` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
 
 --
 -- Dumping data for table `roles`
 --
 
-LOCK TABLES `roles` WRITE;
-/*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-INSERT INTO `roles` VALUES (1,'Admin'),(2,'Client'),(3,'Master');
-/*!40000 ALTER TABLE `roles` ENABLE KEYS */;
-UNLOCK TABLES;
+INSERT INTO `roles` VALUES (1,'Admin');
+INSERT INTO `roles` VALUES (2,'Client');
+INSERT INTO `roles` VALUES (3,'Master');
 
 --
 -- Table structure for table `users`
@@ -84,18 +98,14 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_user_id_uindex` (`user_id`),
   UNIQUE KEY `users_id_uindex` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4;
+
 
 --
 -- Dumping data for table `users`
 --
 
-LOCK TABLES `users` WRITE;
-/*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (8,'5023984473','',2,'A','B'),(9,'5049241161','',3,'Rudolfo','SIKORSKY'),(29,'500012101','vlad_drak',3,'Vlad','Drakula');
-/*!40000 ALTER TABLE `users` ENABLE KEYS */;
-UNLOCK TABLES;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -106,4 +116,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-12-23 17:33:34
+-- Dump completed on 2021-12-24 23:11:04
