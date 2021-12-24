@@ -44,8 +44,9 @@ class BotController
         } else {
             $update = \request()->json()->all();
         }
-        $update_id = $update['update_id'];
 
+        $update_id = $update['update_id'];
+        file_put_contents('log.txt',$update['update_id'],FILE_APPEND);
             $this->action($update);
 
         if ($this->isManual) {
