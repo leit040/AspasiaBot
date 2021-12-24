@@ -65,7 +65,10 @@ class DbRepository
     {
         $sql = "SELECT id, master_id from dialogs where chat_id = $id AND status = 'pending'";
         $stmt = $this->dbh->query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        file_put_contents('logSaveDialog.txt',serialize($result),FILE_APPEND);
+        return $result;
     }
 
     public function isMasterId($id)

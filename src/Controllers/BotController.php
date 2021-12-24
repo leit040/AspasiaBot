@@ -65,8 +65,9 @@ class BotController
                 default:
 
                     if ($masterId = $this->dbr->isMasterId($update['callback_query']['data'])) {
-                        if(!$this->dbr->ifClientInActiveDialog($update['callback_query']['from']['id']))
-                        {$this->startDialog($update['callback_query']['from']['id'], $update['callback_query']['data'],'');}
+                        if (!$this->dbr->ifClientInActiveDialog($update['callback_query']['from']['id'])) {
+                            $this->startDialog($update['callback_query']['from']['id'], $update['callback_query']['data'], '');
+                        }
                     }
                     break;
             }
@@ -99,9 +100,8 @@ class BotController
                     return;
                 }
                 $dialog_ids = $this->dbr->ifClientInPendingDialog($update['message']['from']['id']);
-                file_put_contents('logSaveDialog.txt',serialize($dialog_ids),FILE_APPEND);
                 if (count(($dialog_ids))) {
-                    $this->dbr->savePendingMessage($update['message']['text'],$dialog_ids['id'],$dialog_ids['master_id']);
+                    $this->dbr->savePendingMessage($update['message']['text'], $dialog_ids['id'], $dialog_ids['master_id']);
                     return;
                 }
 
@@ -115,23 +115,23 @@ class BotController
         $response = $this->client->request('GET', "sendMessage?" . http_build_query($data));
     }
 
-    public function startDialog($chat_id, $master_id,$message)
+    public function startDialog($chat_id, $master_id, $message)
     {
 
-        $dialogStatus = $this->dbr->saveDialog($chat_id, $master_id,$message);
+        $dialogStatus = $this->dbr->saveDialog($chat_id, $master_id, $message);
         $data = [
             'chat_id' => $chat_id,
             'text' => "Мастер получил ваше сообщение, и скоро вам ответит",
         ];
         $this->sendMessage($data);
-        if($dialogStatus == 'active'){
-        $data = [
-            'chat_id' => $master_id,
-            'text' => "С вами хочет побеседовать пользователь. Тут будут сообщения от него. Чтобы закончить диалог введите команду /finish",
-        ];
-        $this->sendMessage($data);
+        if ($dialogStatus == 'active') {
+            $data = [
+                'chat_id' => $master_id,
+                'text' => "С вами хочет побеседовать пользователь. Тут будут сообщения от него. Чтобы закончить диалог введите команду /finish",
+            ];
+            $this->sendMessage($data);
         }
-        }
+    }
 
     public function sendMasterList($chat_id)
     {
@@ -185,22 +185,22 @@ class BotController
             ]
         ];
         $this->sendMessage($data);
-        $pendingMessages =  $this->dbr->finishDialog($masterId);
-        if(count($pendingMessages)){
+        $pendingMessages = $this->dbr->finishDialog($masterId);
+        if (count($pendingMessages)) {
             $data = [
                 'chat_id' => $masterId,
                 'text' => 'Еще один клиент желает пообщаться с вами. Вы в чате с ним. введите команду /finish после окончания диалога',
             ];
             $this->sendMessage($data);
         }
-        foreach($pendingMessages as $pendingMessage){
+        foreach ($pendingMessages as $pendingMessage) {
             $data = [
                 'chat_id' => $pendingMessage['masterId'],
                 'text' => $pendingMessage['message'],
-                ];
+            ];
 
             $this->sendMessage($data);
-                        }
+        }
 
     }
 
