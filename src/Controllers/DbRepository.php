@@ -83,7 +83,6 @@ class DbRepository
         $query = "INSERT INTO dialogs (`chat_id`,`master_id`,`status`) values (:chat_id,:master_id,:status)";
         $stmt1 = $this->dbh->prepare($query);
         $result = $stmt->fetchAll();
-        file_put_contents('logSaveDialog.txt',$result);
         if (count($result)) {
             $stmt1->execute(['chat_id' => $chat_id, 'master_id' => $master_id, 'status' => 'pending']);
             return 'pending';
@@ -107,7 +106,8 @@ class DbRepository
         $stmt = $this->dbh->query($sql);
         $sql = "SELECT id from dialogs where  master_id=$master_id AND status = 'pending' LIMIT 1";
         $stmt = $this->dbh->query($sql);
-        if ($id = $stmt->fetchColumn()) {
+        $id = $stmt->fetchColumn();
+        if ($id) {
             $sql = "UPDATE   dialogs  set status = 'active' where id = $id";
             $stmt = $this->dbh->query($sql);
             $sql = "SELECT * from pending where dialogId = $id";
