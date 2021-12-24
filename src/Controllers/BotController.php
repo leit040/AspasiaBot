@@ -38,10 +38,7 @@ class BotController
 
 
     public function callback($mes = null)
-
-
     {
-
         if ($mes) {
             $update = $mes;
         } else {
@@ -68,7 +65,8 @@ class BotController
                 default:
 
                     if ($masterId = $this->dbr->isMasterId($update['callback_query']['data'])) {
-                        $this->startDialog($update['callback_query']['from']['id'], $update['callback_query']['data']);
+                        if(!$this->dbr->ifClientInDialog($update['callback_query']['from']['id']))
+                        {$this->startDialog($update['callback_query']['from']['id'], $update['callback_query']['data']);}
                     }
                     break;
             }
@@ -93,15 +91,18 @@ class BotController
             default:
 
                 if ($chat_id = $this->dbr->ifMasterInDialog($update['message']['from']['id'])) {
-
                     $this->forwardMessage($update['message'], $chat_id, 'masterToUser');
                     return;
                 }
-                if ($chat_id = $this->dbr->ifClientInDialog($update['message']['from']['id'])) {
-
+                if ($chat_id = $this->dbr->ifClientInActiveDialog($update['message']['from']['id'])) {
                     $this->forwardMessage($update['message'], $chat_id, 'userToMaster');
                     return;
                 }
+                if ($dialog_ids = $this->dbr->ifClientInPendingDialog($update['message']['from']['id'])) {
+                    $this->dbr->savePendingMessage($update['message']['text'],$dialog_ids['id'],$dialog_ids['master_id']);
+                    return;
+                }
+
         }
 
     }
@@ -114,7 +115,6 @@ class BotController
 
     public function startDialog($chat_id, $master_id)
     {
-
         $this->dbr->saveDialog($chat_id, $master_id);
         $data = [
             'chat_id' => $chat_id,
@@ -145,7 +145,6 @@ class BotController
 
 
         $this->sendMessage($data);
-
     }
 
     public function sendHello($userId)
@@ -170,7 +169,6 @@ class BotController
     public function finishDialog($masterId)
     {
         $clientId = $this->dbr->ifMasterInDialog($masterId);
-        $this->dbr->finishDialog($masterId);
         $data = [
             'chat_id' => $clientId,
             'text' => "Мастер закончил этот разговор. Спасибо за Ваше обращение.",
@@ -182,6 +180,22 @@ class BotController
             ]
         ];
         $this->sendMessage($data);
+        $pendingMessages =  $this->dbr->finishDialog($masterId);
+        if(count($pendingMessages)){
+            $data = [
+                'chat_id' => $masterId,
+                'text' => 'Еще один клиент желает пообщаться с вами. Вы в чате с ним. введите команду /finish после окончания диалога',
+            ];
+            $this->sendMessage($data);
+        }
+        foreach($pendingMessages as $pendingMessage){
+            $data = [
+                'chat_id' => $pendingMessage['masterId'],
+                'text' => $pendingMessage['message'],
+                ];
+
+            $this->sendMessage($data);
+                        }
 
     }
 

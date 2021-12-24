@@ -27,7 +27,8 @@ class DbRepository
         return $stmt->fetchAll();
     }
 
-    public function getMasterByChatId($chat_id){
+    public function getMasterByChatId($chat_id)
+    {
         $sql = "SELECT users.name, users.lastname, users.user_id from dialogs   JOIN users ON dialogs.master_id = users.user_id where dialogs.master_id = $chat_id AND status = 'active'";
         $stmt = $this->dbh->query($sql);
         $result = $stmt->fetch(PDO::FETCH_LAZY);
@@ -35,6 +36,7 @@ class DbRepository
 
 
     }
+
     public function getNameByID($id)
     {
 
@@ -52,11 +54,18 @@ class DbRepository
         return $stmt->fetchColumn();
     }
 
-    public function ifClientInDialog($id)
+    public function ifClientInActiveDialog($id)
     {
         $sql = "SELECT master_id from dialogs where chat_id = $id AND status = 'active'";
         $stmt = $this->dbh->query($sql);
         return $stmt->fetchColumn();
+    }
+
+    public function ifClientInPendingDialog($id)
+    {
+        $sql = "SELECT id, master_id from dialogs where chat_id = $id AND status = 'pending'";
+        $stmt = $this->dbh->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function isMasterId($id)
@@ -67,7 +76,7 @@ class DbRepository
     }
 
 
-    public function saveDialog($chat_id, $master_id)
+    public function saveDialog($chat_id, $master_id,$message)
     {
         $sql = "SELECT id from dialogs where chat_id = $chat_id AND master_id=$master_id AND status = 'active'";
         $stmt = $this->dbh->query($sql);
@@ -78,8 +87,13 @@ class DbRepository
         } else {
             $stmt1->execute(['chat_id' => $chat_id, 'master_id' => $master_id, 'status' => 'active']);
         }
+    }
 
-
+    public function savePendingMessage($message, $dialogId,$masterId){
+        $query = "INSERT INTO pending (`message`,`dialogId`,`masterId`) values (:message,:dialogId,:masterId)";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute(['message' => $message, 'dialogId' => $dialogId, 'masterId'=>$masterId]);
+        return;
     }
 
     public function finishDialog($master_id)
@@ -91,9 +105,14 @@ class DbRepository
         if ($id = $stmt->fetchColumn()) {
             $sql = "UPDATE   dialogs  set status = 'active' where id = $id";
             $stmt = $this->dbh->query($sql);
-        }
-
+            $sql = "SELECT * from pending where dialogId = $id";
+            $stmt = $this->dbh->query($sql);
+            return $stmt->fetchAll();
+                    }
+            return false;
     }
+
+
 
     public function saveMaster($message)
     {
