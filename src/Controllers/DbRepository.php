@@ -65,7 +65,7 @@ class DbRepository
     {
         $sql = "SELECT id, master_id from dialogs where chat_id = $id AND status = 'pending'";
         $stmt = $this->dbh->query($sql);
-        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result;
     }
 
