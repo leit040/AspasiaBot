@@ -29,28 +29,25 @@ class BotController
     function getUpdates()
     {
         $this->isManual = true;
-        $this->dbr->getMastersList();
         $response = $this->client->request('GET', 'getUpdates');
         $mes = json_decode($response->getBody()->getContents(), true);
-        $this->callback($mes); //Вызываем основной обработчик
-    }
+        foreach ($mes as $update) {
+            $this->callback($update); //Вызываем основной обработчик
+        }
+        }
 
 
-    public function callback(array $mes = null)
+    public function callback($mes = null)
     {
-
         if ($mes) {
-            $updates = $mes;
+            $update = $mes;
         } else {
-            $updates = \request()->json()->all();
+            $update = \request()->json()->all();
         }
-        $update_id = 0;
-        // dd($updates['result']);
-        foreach ($updates['result'] as $update) {
+        $update_id = $update['update_id'];
 
-            $update_id = $update['update_id'];
             $this->action($update);
-        }
+
         if ($this->isManual) {
             $this->client->request('GET', 'getUpdates?offset=' . ++$update_id);
         }
