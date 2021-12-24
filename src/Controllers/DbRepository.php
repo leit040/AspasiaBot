@@ -76,13 +76,15 @@ class DbRepository
     }
 
 
-    public function saveDialog($chat_id, $master_id,$message)
+    public function saveDialog($chat_id, $master_id, $message)
     {
         $sql = "SELECT id from dialogs where master_id=$master_id AND status = 'active'";
         $stmt = $this->dbh->query($sql);
         $query = "INSERT INTO dialogs (`chat_id`,`master_id`,`status`) values (:chat_id,:master_id,:status)";
         $stmt1 = $this->dbh->prepare($query);
-        if ($stmt->fetchColumn()) {
+        $result = $stmt->fetchAll();
+        file_put_contents('logSaveDialog.txt',$result);
+        if (count($result)) {
             $stmt1->execute(['chat_id' => $chat_id, 'master_id' => $master_id, 'status' => 'pending']);
             return 'pending';
         } else {
@@ -91,10 +93,11 @@ class DbRepository
         }
     }
 
-    public function savePendingMessage($message, $dialogId,$masterId){
+    public function savePendingMessage($message, $dialogId, $masterId)
+    {
         $query = "INSERT INTO pending (`message`,`dialogId`,`masterId`) values (:message,:dialogId,:masterId)";
         $stmt = $this->dbh->prepare($query);
-        $stmt->execute(['message' => $message, 'dialogId' => $dialogId, 'masterId'=>$masterId]);
+        $stmt->execute(['message' => $message, 'dialogId' => $dialogId, 'masterId' => $masterId]);
         return;
     }
 
@@ -110,10 +113,9 @@ class DbRepository
             $sql = "SELECT * from pending where dialogId = $id";
             $stmt = $this->dbh->query($sql);
             return $stmt->fetchAll();
-                    }
-            return false;
+        }
+        return false;
     }
-
 
 
     public function saveMaster($message)
