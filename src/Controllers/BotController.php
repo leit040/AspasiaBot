@@ -98,7 +98,8 @@ class BotController
                     $this->forwardMessage($update['message'], $chat_id, 'userToMaster');
                     return;
                 }
-                if ($dialog_ids = $this->dbr->ifClientInPendingDialog($update['message']['from']['id'])) {
+                $dialog_ids = $this->dbr->ifClientInPendingDialog($update['message']['from']['id']);
+                if (count(($dialog_ids))) {
                     $this->dbr->savePendingMessage($update['message']['text'],$dialog_ids['id'],$dialog_ids['master_id']);
                     return;
                 }
