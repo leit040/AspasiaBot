@@ -34,30 +34,25 @@ class BotController
         foreach ($mes as $update) {
             $this->callback($update); //Вызываем основной обработчик
         }
-        }
+    }
 
 
     public function callback($mes = null)
+
+
     {
 
-        file_put_contents('log.txt',"!!!!!".PHP_EOL,FILE_APPEND);
-//        if ($mes) {
-//            $update = $mes;
-//        } else {
+        if ($mes) {
+            $update = $mes;
+        } else {
             $update = \request()->json()->all();
-//        }
+        }
+        $update_id = $update['update_id'];
+        $this->action($update);
 
-        $data['chat_id'] = $update['message']['chat']['id'];
-        $data['text'] = "test from German";
-        file_get_contents('https://api.telegram.org/bot5098837610:AAGzuSQ5-shOqpBdVZXD6kqm1MeJiRCq0Vs/sendMessage?' . http_build_query($data));
-
-        //   $update_id = $update['update_id'];
-        file_put_contents('log.txt',serialize($update),FILE_APPEND);
-//            $this->action($update);
-//
-//        if ($this->isManual) {
-//            $this->client->request('GET', 'getUpdates?offset=' . ++$update_id);
-//        }
+        if ($this->isManual) {
+            $this->client->request('GET', 'getUpdates?offset=' . ++$update_id);
+        }
     }
 
     private function action($update)
