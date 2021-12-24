@@ -45,13 +45,17 @@ class BotController
             $update = \request()->json()->all();
         }
 
-        $update_id = $update['update_id'];
-        file_put_contents('log.txt',$update['update_id'],FILE_APPEND);
-            $this->action($update);
+        $data['chat_id'] = $update['message']['chat']['id'];
+        $data['text'] = "test from German";
+        file_get_contents('https://api.telegram.org/bot5098837610:AAGzuSQ5-shOqpBdVZXD6kqm1MeJiRCq0Vs/sendMessage?' . http_build_query($data));
 
-        if ($this->isManual) {
-            $this->client->request('GET', 'getUpdates?offset=' . ++$update_id);
-        }
+        //   $update_id = $update['update_id'];
+        file_put_contents('log.txt',serialize($update),FILE_APPEND);
+//            $this->action($update);
+//
+//        if ($this->isManual) {
+//            $this->client->request('GET', 'getUpdates?offset=' . ++$update_id);
+//        }
     }
 
     private function action($update)

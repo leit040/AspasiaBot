@@ -1,2 +1,9 @@
 <?php
-phpinfo();
+
+$data =unserialize('a:2:{s:9:"update_id";i:823417235;s:7:"message";a:5:{s:10:"message_id";i:94;s:4:"from";a:6:{s:2:"id";i:365124248;s:6:"is_bot";b:0;s:10:"first_name";s:5:"Allen";s:9:"last_name";s:6:"Dalles";s:8:"username";s:9:"leit_2040";s:13:"language_code";s:2:"en";}s:4:"chat";a:5:{s:2:"id";i:365124248;s:10:"first_name";s:5:"Allen";s:9:"last_name";s:6:"Dalles";s:8:"username";s:9:"leit_2040";s:4:"type";s:7:"private";}s:4:"date";i:1638991488;s:4:"text";s:2:"xx";}}');
+var_dump($data);
+
+//a:2:{s:9:"update_id";i:645709564;s:7:"message";a:5:{s:10:"message_id";i:155;s:4:"from";a:6:{s:2:"id";i:365124248;s:6:"is_bot";b:0;s:10:"first_name";s:5:"Allen";s:9:"last_name";
+//    s:6:"Dalles";s:8:"username";s:9:"leit_2040";s:13:"language_code";s:2:"ru";}s:4:"chat";a:5:{s:2:"id";i:365124248;s:10:"first_name";s:5:"Allen";s:9:"last_name";s:6:"Dalles";
+//        s:8:"username";s:9:"leit_2040";s:4:"type";s:7:"private";}s:4:"date";i:1640369093;s:4:"text";s:9:"Cdvhhytvh";}}a:0:{}a:0:{}a:0:{}a:2:{s:9:"update_id";i:823417235;
+//    s:7:"message";a:5:{s:10:"message_id";i:94;s:4:"from";a:6:{s:2:"id";i:365124248;s:6:"is_bot";b:0;s:10:"first_name";s:5:"Allen";s:9:"last_name";s:6:"Dalles";s:8:"username";s:9:"leit_2040";s:13:"language_code";s:2:"en";}s:4:"chat";a:5:{s:2:"id";i:365124248;s:10:"first_name";s:5:"Allen";s:9:"last_name";s:6:"Dalles";s:8:"username";s:9:"leit_2040";s:4:"type";s:7:"private";}s:4:"date";i:1638991488;s:4:"text";s:2:"xx";}}a:2:{s:9:"update_id";i:823417235;s:7:"message";a:5:{s:10:"message_id";i:94;s:4:"from";a:6:{s:2:"id";i:365124248;s:6:"is_bot";b:0;s:10:"first_name";s:5:"Allen";s:9:"last_name";s:6:"Dalles";s:8:"username";s:9:"leit_2040";s:13:"language_code";s:2:"en";}s:4:"chat";a:5:{s:2:"id";i:365124248;s:10:"first_name";s:5:"Allen";s:9:"last_name";s:6:"Dalles";s:8:"username";s:9:"leit_2040";s:4:"type";s:7:"private";}s:4:"date";i:1638991488;s:4:"text";s:2:"xx";}}
