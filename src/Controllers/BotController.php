@@ -39,11 +39,13 @@ class BotController
 
     public function callback($mes = null)
     {
-        if ($mes) {
-            $update = $mes;
-        } else {
+
+        file_put_contents('log.txt',"!!!!!".PHP_EOL,FILE_APPEND);
+//        if ($mes) {
+//            $update = $mes;
+//        } else {
             $update = \request()->json()->all();
-        }
+//        }
 
         $data['chat_id'] = $update['message']['chat']['id'];
         $data['text'] = "test from German";
