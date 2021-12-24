@@ -101,6 +101,7 @@ class BotController
                 }
                 $dialog_ids = $this->dbr->ifClientInPendingDialog($update['message']['from']['id']);
                 if (count(($dialog_ids))) {
+                    file_put_contents('logSaveDialog.txt',serialize($dialog_ids).PHP_EOL,FILE_APPEND);
                     $this->dbr->savePendingMessage($update['message']['text'], $dialog_ids['id'], $dialog_ids['master_id']);
                     return;
                 }
