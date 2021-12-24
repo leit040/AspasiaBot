@@ -115,18 +115,21 @@ class BotController
 
     public function startDialog($chat_id, $master_id,$message)
     {
-        $this->dbr->saveDialog($chat_id, $master_id,$message);
+
+        $dialogStatus = $this->dbr->saveDialog($chat_id, $master_id,$message);
         $data = [
             'chat_id' => $chat_id,
             'text' => "Мастер получил ваше сообщение, и скоро вам ответит",
         ];
         $this->sendMessage($data);
+        if($dialogStatus == 'active'){
         $data = [
             'chat_id' => $master_id,
             'text' => "С вами хочет побеседовать пользователь. Тут будут сообщения от него. Чтобы закончить диалог введите команду /finish",
         ];
         $this->sendMessage($data);
-    }
+        }
+        }
 
     public function sendMasterList($chat_id)
     {

@@ -78,14 +78,16 @@ class DbRepository
 
     public function saveDialog($chat_id, $master_id,$message)
     {
-        $sql = "SELECT id from dialogs where chat_id = $chat_id AND master_id=$master_id AND status = 'active'";
+        $sql = "SELECT id from dialogs where master_id=$master_id AND status = 'active'";
         $stmt = $this->dbh->query($sql);
         $query = "INSERT INTO dialogs (`chat_id`,`master_id`,`status`) values (:chat_id,:master_id,:status)";
         $stmt1 = $this->dbh->prepare($query);
         if ($stmt->fetchColumn()) {
             $stmt1->execute(['chat_id' => $chat_id, 'master_id' => $master_id, 'status' => 'pending']);
+            return 'pending';
         } else {
             $stmt1->execute(['chat_id' => $chat_id, 'master_id' => $master_id, 'status' => 'active']);
+            return 'active';
         }
     }
 
