@@ -95,16 +95,10 @@ class DbRepository
 
     public function savePendingMessage($message, $dialogId, $masterId)
     {
-        file_put_contents('logSaveDialog.txt',$dialogId.$masterId.PHP_EOL,FILE_APPEND);
         $query = "INSERT INTO pending (`message`,`dialogId`,`masterId`) values (:message,:dialogId,:masterId)";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute(['message' => $message, 'dialogId' => $dialogId, 'masterId' => $masterId]);
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        if($result){
-            file_put_contents('logSaveDialog.txt','DONE'.PHP_EOL,FILE_APPEND);
-        }else{
-            file_put_contents('logSaveDialog.txt','Trouble'.PHP_EOL,FILE_APPEND);
-        }
         return;
     }
 
