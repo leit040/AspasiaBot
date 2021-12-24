@@ -64,8 +64,8 @@ class DbRepository
     public function ifClientInPendingDialog($id)
     {
         $sql = "SELECT id, master_id from dialogs where chat_id = $id AND status = 'pending'";
+        file_put_contents('logSaveDialog.txt','id is '.$id.PHP_EOL,FILE_APPEND);
         $stmt = $this->dbh->query($sql);
-
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         file_put_contents('logSaveDialog.txt',serialize($result),FILE_APPEND);
         return $result;
