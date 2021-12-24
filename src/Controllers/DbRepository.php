@@ -64,10 +64,8 @@ class DbRepository
     public function ifClientInPendingDialog($id)
     {
         $sql = "SELECT id, master_id from dialogs where chat_id = $id AND status = 'pending'";
-        file_put_contents('logSaveDialog.txt','id is '.$id.PHP_EOL,FILE_APPEND);
         $stmt = $this->dbh->query($sql);
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        file_put_contents('logSaveDialog.txt',serialize($result),FILE_APPEND);
         return $result;
     }
 
@@ -100,6 +98,12 @@ class DbRepository
         $query = "INSERT INTO pending (`message`,`dialogId`,`masterId`) values (:message,:dialogId,:masterId)";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute(['message' => $message, 'dialogId' => $dialogId, 'masterId' => $masterId]);
+        $result = $stmt->fetchAll();
+        if($result){
+            file_put_contents('logSaveDialog.txt','DONE'.PHP_EOL,FILE_APPEND);
+        }else{
+            file_put_contents('logSaveDialog.txt','Trouble'.PHP_EOL,FILE_APPEND);
+        }
         return;
     }
 
