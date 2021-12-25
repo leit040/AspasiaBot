@@ -13,7 +13,7 @@ class BotController
 
     private Client $client;
     private DbRepository $dbr;
-    private string $adminId = '365124248';
+    private string $adminId = '1048674084';
     private bool $isManual = false;
 
     public function __construct()
