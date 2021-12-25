@@ -121,7 +121,7 @@ class BotController
         $dialogStatus = $this->dbr->saveDialog($chat_id, $master_id, $message);
         $data = [
             'chat_id' => $chat_id,
-            'text' => "Мастер получил ваше сообщение, и скоро вам ответит",
+            'text' => "Напишите ваше сообщение. мастер ответит как только будет свободен.",
         ];
         $this->sendMessage($data);
         if ($dialogStatus == 'active') {
@@ -198,8 +198,8 @@ class BotController
                 'chat_id' => $pendingMessage['masterId'],
                 'text' => $pendingMessage['message'],
             ];
-
             $this->sendMessage($data);
+            $this->dbr->deletePendingMessage($pendingMessage('id'));
         }
 
     }
