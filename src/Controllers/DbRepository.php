@@ -119,6 +119,11 @@ class DbRepository
         return false;
     }
 
+    public function deletePendingMessage($id)
+    {
+        $sql = "DELETE  from pending where id = $id";
+        $stmt = $this->dbh->query($sql);
+    }
 
     public function saveMaster($message)
     {
