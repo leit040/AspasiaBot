@@ -13,13 +13,15 @@ class BotController
 
     private Client $client;
     private DbRepository $dbr;
-    private string $adminId = '1048674084';
+    private $adminId;
+
     private bool $isManual = false;
 
     public function __construct()
     {
         $this->client = new Client(['base_uri' => 'https://api.telegram.org/bot' . getenv("TOKEN") . '/', 'timeout' => 2.0]);
         $this->dbr = new DbRepository();
+        $this->adminId = getenv("MASTER_ID");
     }
 
     /**
