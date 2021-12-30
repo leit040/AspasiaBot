@@ -133,20 +133,15 @@ class DbRepository
         $sql = "SELECT id from users where user_id = $user_id";
         $stmt = $this->dbh->query($sql, PDO::FETCH_ASSOC);
         $rows = $stmt->fetchColumn();
-        $masterName = substr($message['text'],strlen(getenv('MASTER_CODE_STRING'))+1);
-        file_put_contents('runLog.txt','MasterName= '.$masterName.'count = '.$rows.PHP_EOL,FILE_APPEND);
+        $masterName = substr($message['text'], strlen(getenv('MASTER_CODE_STRING')) + 1);
         if (!$rows) {
-            file_put_contents('runLog.txt','!count = '.PHP_EOL,FILE_APPEND);
             $query = "INSERT INTO users (`user_id`,`username`,`name`,`lastname`,`nameFrom`,`role`) values (:user_id,:username,:name,:lastname,:nameFrom,:role)";
-
             $stmt = $this->dbh->prepare($query);
-            file_put_contents('runLog.txt','Prepare:done'.PHP_EOL,FILE_APPEND);
-            $testResult = $stmt->execute(['user_id' => $user_id, 'username' => $username, 'name' => $name, 'lastname' => $lastname, 'nameFrom' => $masterName,'role' => 3]);
-            file_put_contents('runLog.txt','Add first time, result = '.$testResult.PHP_EOL,FILE_APPEND);
+            $stmt->execute(['user_id' => $user_id, 'username' => $username, 'name' => $name, 'lastname' => $lastname, 'nameFrom' => $masterName, 'role' => 3]);
             return;
         }
-        file_put_contents('runLog.txt','Another way'.PHP_EOL,FILE_APPEND);
-        $sql = "UPDATE users set role = 3, nameFrom = $masterName where user_id = $user_id";
+        file_put_contents('runLog.txt', 'Another way' . PHP_EOL, FILE_APPEND);
+        $sql = `UPDATE users set role = 3, nameFrom = $masterName where user_id = $user_id`;
         $stmt = $this->dbh->query($sql);
     }
 
