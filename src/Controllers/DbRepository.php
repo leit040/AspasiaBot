@@ -140,10 +140,10 @@ class DbRepository
             $stmt->execute(['user_id' => $user_id, 'username' => $username, 'name' => $name, 'lastname' => $lastname, 'nameFrom' => $masterName, 'role' => 3]);
             return;
         }
-        file_put_contents('runLog.txt', 'Another way' . PHP_EOL, FILE_APPEND);
+
         $sql = "UPDATE users set role = 3, nameFrom = '$masterName' where user_id = $user_id";
-        file_put_contents('runLog.txt', $sql . PHP_EOL, FILE_APPEND);
         $stmt = $this->dbh->query($sql);
+        return;
     }
 
 
