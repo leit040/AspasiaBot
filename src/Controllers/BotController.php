@@ -213,8 +213,9 @@ class BotController
         switch ($mark) {
             case 'masterToUser':
                 $clientName = $this->dbr->getNameByID($userId);
-                $mess = "Мастер " . $message['from']['first_name'] . " " . $message['from']['last_name'] . " пишет клиенту " . $clientName . " :" . $message['text'];
-                $messToClient = $message['from']['first_name'] . " " . $message['from']['last_name'] . ': ' . PHP_EOL . $message['text'];
+                $masterName = $this->dbr->getNameByID($message['from']['id']);
+                $mess = "Мастер " .$masterName . " пишет клиенту " . $clientName . " :" . $message['text'];
+                $messToClient = $masterName. ': ' . PHP_EOL . $message['text'];
                 break;
             case 'userToMaster':
                 $masterName = $this->dbr->getMasterByChatId($userId);
