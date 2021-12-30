@@ -227,8 +227,10 @@ class BotController
         $data = [
             'chat_id' => $userId,
             'text' => $mark=="masterToUser"? $messToClient: $message['text'],
+            'reply_markup' =>[
             'keyboard' =>  [['text' => '/finish']]
-        ];
+        ]
+            ];
         $this->sendMessage($data);
 
         $dataToAdmin = [
