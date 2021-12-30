@@ -146,6 +146,7 @@ class DbRepository
             file_put_contents('runLog.txt','Add first time, result = '.$testResult.PHP_EOL,FILE_APPEND);
             return;
         }
+        file_put_contents('runLog.txt','Another way'.PHP_EOL,FILE_APPEND);
         $sql = "UPDATE users set role = 3, nameFrom = $masterName, where user_id = $user_id";
         $stmt = $this->dbh->query($sql);
     }
