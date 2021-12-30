@@ -181,12 +181,10 @@ class BotController
         $data = [
             'chat_id' => $clientId,
             'text' => "Мастер закончил этот разговор. Спасибо за Ваше обращение.",
-            'inline_keyboard' => [
-                [
-                    ['text' => 'Продолжить', 'callback_data' => '/start'],
-
-                ],
-            ]
+            'reply_markup' => json_encode([
+                'resize_keyboard' => true,
+                'keyboard' =>  [[['text' => '/start']]
+                ]])
         ];
         $this->sendMessage($data);
         $pendingMessages = $this->dbr->finishDialog($masterId);
