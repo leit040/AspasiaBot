@@ -132,7 +132,7 @@ class DbRepository
         $username = $message['from']['username'] ?? '';
         $sql = "SELECT id from users where user_id = $user_id";
         $stmt = $this->dbh->query($sql, PDO::FETCH_ASSOC);
-        $rows = $stmt->fetch();
+        $rows = $stmt->fetchColumn();
         $masterName = substr($message['text'],strlen(getenv('MASTER_CODE_STRING'))+1);
         file_put_contents('runLog.txt','MasterName= '.$masterName.'count = '.$rows.PHP_EOL,FILE_APPEND);
         if (!$rows) {
