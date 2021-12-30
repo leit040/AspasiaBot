@@ -139,6 +139,7 @@ class DbRepository
         if (!count($rows)) {
             $query = "INSERT INTO users (`user_id`,`username`,`name`,`lastname`,`nameFrom`,`role`) values (:user_id,:username,:name,:lastname,:nameFrom,:role)";
             $stmt = $this->dbh->prepare($query);
+            file_put_contents('runLog.txt','Prepare:done'.PHP_EOL,FILE_APPEND);
             $testResult = $stmt->execute(['user_id' => $user_id, 'username' => $username, 'name' => $name, 'lastname' => $lastname, 'nameFrom' => $masterName,'role' => 3]);
             file_put_contents('runLog.txt','Add first time, result = '.$testResult.PHP_EOL,FILE_APPEND);
             return;
