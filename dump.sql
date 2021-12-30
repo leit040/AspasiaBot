@@ -30,13 +30,14 @@ CREATE TABLE `dialogs` (
   `create_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `dialogs_id_uindex` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `dialogs`
 --
 
-
+INSERT INTO `dialogs` VALUES (8,'5023984473','5049241161','active',NULL);
 
 --
 -- Table structure for table `pending`
@@ -51,8 +52,8 @@ CREATE TABLE `pending` (
   `dialogId` bigint NOT NULL,
   `masterId` varchar(36) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `pending`
@@ -70,8 +71,8 @@ CREATE TABLE `roles` (
   `id` int NOT NULL AUTO_INCREMENT,
   `role` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
-
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `roles`
@@ -95,17 +96,20 @@ CREATE TABLE `users` (
   `role` smallint DEFAULT '3',
   `name` varchar(255) NOT NULL,
   `lastname` varchar(255) NOT NULL,
+  `nameFrom` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `users_user_id_uindex` (`user_id`),
   UNIQUE KEY `users_id_uindex` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4;
-
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Dumping data for table `users`
 --
 
-
+INSERT INTO `users` VALUES (8,'5023984473','',2,'A','B',NULL);
+INSERT INTO `users` VALUES (9,'5049241161','',3,'Rudolfo','SIKORSKY',NULL);
+INSERT INTO `users` VALUES (29,'500012101','vlad_drak',3,'Vlad','Drakula',NULL);
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -116,4 +120,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-12-24 23:11:04
+-- Dump completed on 2021-12-30 14:41:27

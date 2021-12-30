@@ -56,7 +56,6 @@ class BotController
 
     private function action($update)
     {
-
         if (isset($update['callback_query'])) {
 
             switch ($update['callback_query']['data']) {
@@ -76,9 +75,6 @@ class BotController
             return;
         }
         switch ($update['message']['text']) {
-            case getenv('MASTER_CODE_STRING'):
-                $this->dbr->saveMaster($update['message']);
-                return;
             case '/start':
                 if (!$this->dbr->isMasterId($update['message']['from']['id'])) {
                     $this->dbr->saveUser($update['message']);
@@ -93,6 +89,10 @@ class BotController
                 return;
             default:
 
+                if (str_contains($update['message']['text'], getenv('MASTER_CODE_STRING'))) {
+                    $this->dbr->saveMaster($update['message']);
+                    return;
+                }
                 if ($chat_id = $this->dbr->ifMasterInDialog($update['message']['from']['id'])) {
                     $this->forwardMessage($update['message'], $chat_id, 'masterToUser');
                     return;
@@ -129,7 +129,7 @@ class BotController
         if ($dialogStatus == 'active') {
             $data = [
                 'chat_id' => $master_id,
-                'text' => "С вами хочет побеседовать пользователь. Тут будут сообщения от него. Чтобы закончить диалог введите команду /finish",
+                'text' => "С Вами хочет побеседовать пользователь. Тут будут сообщения от него. Чтобы закончить диалог введите команду /finish",
             ];
             $this->sendMessage($data);
         }
@@ -138,12 +138,14 @@ class BotController
     public function sendMasterList($chat_id)
     {
         $rows = $this->dbr->getMastersList();
-        $buttons = array_map(fn($row) => [['text' => $row['name'] . " " . $row['lastname'], 'callback_data' => $row['user_id']]]
-            , $rows);
+        $buttons = array_map(function ($row) {
+            $masterName = $row['nameFrom'] ?? $row['name'] . " " . $row['lastname'];
+            return [['text' => $masterName, 'callback_data' => $row['user_id']]];
+        }, $rows);
 
         $data = [
             'chat_id' => $chat_id,
-            'text' => "Выберите интересующего вас мастера:",
+            'text' => "Выберите интересующего Вас мастера:",
             'reply_markup' => json_encode([
                 'resize_keyboard' => true,
                 'inline_keyboard' => $buttons,
@@ -212,6 +214,7 @@ class BotController
             case 'masterToUser':
                 $clientName = $this->dbr->getNameByID($userId);
                 $mess = "Мастер " . $message['from']['first_name'] . " " . $message['from']['last_name'] . " пишет клиенту " . $clientName . " :" . $message['text'];
+                $messToClient = $message['from']['first_name'] . " " . $message['from']['last_name'] . ': ' . PHP_EOL . $message['text'];
                 break;
             case 'userToMaster':
                 $masterName = $this->dbr->getMasterByChatId($userId);
