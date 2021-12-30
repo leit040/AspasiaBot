@@ -225,7 +225,7 @@ class BotController
 
         $data = [
             'chat_id' => $userId,
-            'text' => $message['text'],
+            'text' => $mark=="masterToUser"? $messToClient: $message['text'],
             'keyboard' => $mark == 'userToMaster' ? [[['text' => '/finish']]] : ''
         ];
         $this->sendMessage($data);
