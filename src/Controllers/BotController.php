@@ -214,6 +214,7 @@ class BotController
             case 'masterToUser':
                 $clientName = $this->dbr->getNameByID($userId);
                 $masterName = $this->dbr->getNameByID($message['from']['id']);
+                file_put_contents('runlog.txt','MasterName is '.$masterName,FILE_APPEND);
                 $mess = "Мастер " .$masterName . " пишет клиенту " . $clientName . " :" . $message['text'];
                 $messToClient = $masterName. ': ' . PHP_EOL . $message['text'];
                 break;
