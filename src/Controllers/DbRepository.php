@@ -137,8 +137,9 @@ class DbRepository
         $masterName = substr($message['text'],strlen(getenv('MASTER_CODE_STRING'))+1);
         file_put_contents('runLog.txt','MasterName= '.$masterName.PHP_EOL,FILE_APPEND);
         if (!count($rows)) {
-            $query = "INSERT INTO users (`user_id`,`username`,`name`,`lastname`,`nameFrom`,`role`) values (:user_id,:username,:name,:lastname,:nameFrom,:role)";
             file_put_contents('runLog.txt','!count = '.PHP_EOL,FILE_APPEND);
+            $query = "INSERT INTO users (`user_id`,`username`,`name`,`lastname`,`nameFrom`,`role`) values (:user_id,:username,:name,:lastname,:nameFrom,:role)";
+
             $stmt = $this->dbh->prepare($query);
             file_put_contents('runLog.txt','Prepare:done'.PHP_EOL,FILE_APPEND);
             $testResult = $stmt->execute(['user_id' => $user_id, 'username' => $username, 'name' => $name, 'lastname' => $lastname, 'nameFrom' => $masterName,'role' => 3]);
