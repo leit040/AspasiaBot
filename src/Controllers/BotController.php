@@ -90,8 +90,7 @@ class BotController
             default:
 
                 if (str_contains($update['message']['text'], getenv('MASTER_CODE_STRING'))) {
-                    file_put_contents('runLog.txt','Start MasterSaving',FILE_APPEND);
-                    $this->dbr->saveMaster($update['message']);
+                   $this->dbr->saveMaster($update['message']);
                     return;
                 }
                 if ($chat_id = $this->dbr->ifMasterInDialog($update['message']['from']['id'])) {

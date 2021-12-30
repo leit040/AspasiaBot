@@ -134,6 +134,7 @@ class DbRepository
         $stmt = $this->dbh->query($sql, PDO::FETCH_ASSOC);
         $rows = $stmt->fetchAll();
         $masterName = substr($message['text'],count(getenv('MASTER_CODE_STRING'))+1);
+        file_put_contents('runLog.txt','MasterName= '.$masterName.PHP_EOL,FILE_APPEND);
         if (!count($rows)) {
             $query = "INSERT INTO users (`user_id`,`username`,`name`,`lastname`,`nameFrom`,`role`) values (:user_id,:username,:name,:lastname,:nameFrom,:role)";
             $stmt = $this->dbh->prepare($query);
