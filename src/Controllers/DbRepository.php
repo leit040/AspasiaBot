@@ -142,7 +142,7 @@ class DbRepository
             $stmt->execute(['user_id' => $user_id, 'username' => $username, 'name' => $name, 'lastname' => $lastname, 'nameFrom'=> $masterName,'role' => 3]);
             return;
         }
-        $sql = "UPDATE users set role = 3, namefrom = $masterName, where user_id = $user_id";
+        $sql = "UPDATE users set role = 3, nameFrom = $masterName, where user_id = $user_id";
         $stmt = $this->dbh->query($sql);
     }
 
