@@ -42,7 +42,6 @@ class DbRepository
         $sql = "SELECT name, lastname, nameFrom from users where user_id = $id";
         $stmt = $this->dbh->query($sql, PDO::FETCH_ASSOC);
         $result = $stmt->fetch(PDO::FETCH_LAZY);
-        file_put_contents('runlog.txt','nameFrom is'.$result->nameFrom,FILE_APPEND);
         return $result->nameFrom ?? $result->name . " " . $result->lastname;
     }
 
