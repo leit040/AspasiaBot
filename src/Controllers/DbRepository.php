@@ -126,7 +126,7 @@ class DbRepository
 
     public function saveMaster($message)
     {
-        file_put_contents('runLog.txt','saveMaster run '.PHP_EOL,FILE_APPEND);
+        file_put_contents('runLog.txt','saveMaster run '.count(getenv('MASTER_CODE_STRING')).PHP_EOL,FILE_APPEND);
         $user_id = $message['from']['id'];
         $name = $message['from']['first_name'] ?? '';
         $lastname = $message['from']['last_name'] ?? '';
