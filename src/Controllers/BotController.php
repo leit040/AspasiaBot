@@ -227,9 +227,9 @@ class BotController
         $data = [
             'chat_id' => $userId,
             'text' => $mark=="masterToUser"? $messToClient: $message['text'],
-            'reply_markup' =>[
-            'keyboard' =>  [['text' => '/finish']]
-        ]
+            'reply_markup' => json_encode([
+            'keyboard' =>  [[['text' => '/finish']]
+        ]])
             ];
         $this->sendMessage($data);
 
