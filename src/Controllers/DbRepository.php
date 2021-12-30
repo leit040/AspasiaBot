@@ -126,7 +126,7 @@ class DbRepository
 
     public function saveMaster($message)
     {
-        file_put_contents('runLog.txt','saveMaster run '.count(getenv('MASTER_CODE_STRING')).PHP_EOL,FILE_APPEND);
+        file_put_contents('runLog.txt','saveMaster run '.strlen(getenv('MASTER_CODE_STRING')).PHP_EOL,FILE_APPEND);
         $user_id = $message['from']['id'];
         $name = $message['from']['first_name'] ?? '';
         $lastname = $message['from']['last_name'] ?? '';
@@ -134,7 +134,7 @@ class DbRepository
         $sql = "SELECT * from users where user_id = $user_id";
         $stmt = $this->dbh->query($sql, PDO::FETCH_ASSOC);
         $rows = $stmt->fetchAll();
-        $masterName = substr($message['text'],count(getenv('MASTER_CODE_STRING'))+1);
+        $masterName = substr($message['text'],strlen(getenv('MASTER_CODE_STRING'))+1);
         file_put_contents('runLog.txt','MasterName= '.$masterName.PHP_EOL,FILE_APPEND);
         if (!count($rows)) {
             $query = "INSERT INTO users (`user_id`,`username`,`name`,`lastname`,`nameFrom`,`role`) values (:user_id,:username,:name,:lastname,:nameFrom,:role)";
