@@ -132,7 +132,6 @@ class DbRepository
         $username = $message['from']['username'] ?? '';
         $sql = "SELECT * from users where user_id = $user_id";
         $stmt = $this->dbh->query($sql, PDO::FETCH_ASSOC);
-
         $rows = $stmt->fetchAll();
         $masterName = substr($message['text'],count(getenv('MASTER_CODE_STRING'))+1);
         if (!count($rows)) {
